@@ -1,5 +1,43 @@
 let userList = document.getElementById("userList");
 let userForm = document.getElementById("userForm");
+let userName = document.getElementById("userName");
+let userEmail = document.getElementById("userEmail");
+let userPassword = document.getElementById("userPassword");
+let saveUserBtn = document.getElementById("saveUserBtn");
+
+saveUserBtn.addEventListener("click", () => {
+    console.log("Klick på knapp");
+
+    let sendUser = {
+        name: userName.value,
+        email: userEmail.value,
+        password: userPassword.value
+    }
+
+    console.log("send", sendUser);
+
+    fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(sendUser)
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Svar från server", data);
+        localStorage.setItem("user", data.id);
+
+        // TÖM INPUTS
+        userEmail.value = "";
+        userName.value = "";
+        userPassword.value = "";
+
+        printUsers();
+        printLogoutBtn();
+    })
+
+})
 
 // INNIT
 if (localStorage.getItem("user")) {
@@ -11,6 +49,7 @@ if (localStorage.getItem("user")) {
 }
 
 function printUsers() {
+    userList.innerHTML = "";
     fetch("http://localhost:3000/users")
     .then(res => res.json())
     .then(data => {
